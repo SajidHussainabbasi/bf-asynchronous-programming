@@ -2,26 +2,27 @@ import { labeledLogger } from '../../../lib/labeled-logger.js';
 
 const { log } = labeledLogger();
 
-// sort the array into `sorted` using side-effects
+//  Correct implementation of sortArray
 const sortArray = (unsorted, sorted) => {
-    // iterate through each item in the unsorted array
-    //  for each item creat a timeout
-    //    in the timeout callback, push the item into `sorted`
-    //    the timeout should delay for item.charCodeAt()
+  for (let item of unsorted) {
+    setTimeout(() => {
+      sorted.push(item);
+    }, item.charCodeAt());
+  }
 };
 
-// can you figure out why the tests pass in the order they do?
-// is it possible for a test never to finish?
+//  Handles checking after the sorting is asynchronously complete
 const testSortAsync = (actual, expected, testId) => {
-    if (actual.length === expected.length) {
-        log(testId, 'actual:', actual, 'expected:', expected);
-        const test1 = actual.toString() === expected.toString();
-        console.assert(test1, testId);
-    } else {
-        // sorting is not finished, check again later
-        setTimeout(testSortAsync, 50, actual, expected, testId);
-    }
+  if (actual.length === expected.length) {
+    log(testId, 'actual:', actual, 'expected:', expected);
+    const test1 = actual.toString() === expected.toString();
+    console.assert(test1, testId);
+  } else {
+    // sorting is not finished, check again later
+    setTimeout(testSortAsync, 50, actual, expected, testId);
+  }
 };
+
 
 const toSort1 = ['ÿ', '!', 'ÿ', '!', 'ÿ'];
 const actual1 = [];
