@@ -10,29 +10,22 @@ import { ORIGIN } from '../config.js';
  * @throws {Error} HTTP error! status: {number}.
  */
 export const userByUsername = async (userName = '') => {
-    // --- declare your resource's URL ---
-    // hint: ctr-f "filter" -> https://github.com/typicode/json-server
-    const URL = _;
+  // Filter users by username
+  const URL = `${ORIGIN}/users?username=${userName}`;
 
-    // --- fetch the API data (this works!) ---
-    const encodedURL = encodeURI(URL);
-    const response = await fetch(encodedURL);
+  const encodedURL = encodeURI(URL);
+  const response = await fetch(encodedURL);
 
-    // --- throw an error if the response is not ok (this works!) ---
-    if (!response.ok) {
-        const message = response.statusText
-            ? `${response.status}: ${response.statusText}\n-> ${URL}`
-            : `HTTP error! status: ${response.status}\n-> ${URL}`;
-        throw new Error(message);
-    }
+  if (!response.ok) {
+    const message = response.statusText
+      ? `${response.status}: ${response.statusText}\n-> ${URL}`
+      : `HTTP error! status: ${response.status}\n-> ${URL}`;
+    throw new Error(message);
+  }
 
-    /* --- parse the data if the response was ok (this works!) ---*/
-    const data = await response.json();
+  const data = await response.json();
 
-    // --- process the fetched data (if necessary) ---
-    //   you do not need to use `await` below this comment
-    const user = _;
-
-    // --- return the final data ---
-    return user;
+  // Return the first match or null if not found
+  const user = data.length > 0 ? data[0] : null;
+  return user;
 };

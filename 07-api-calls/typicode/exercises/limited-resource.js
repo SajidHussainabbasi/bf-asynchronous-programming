@@ -11,24 +11,34 @@ import { ORIGIN } from '../config.js';
  * @throws {Error} HTTP error! status: {number}.
  */
 export const limitedResource = async (resourceType = '', limit = 1) => {
-    // --- generate and declare your resource's URL ---
-    const URL = _;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
 
-    // --- fetch the API data (this works!) ---
-    const encodedURL = encodeURI(URL);
-    const response = await fetch(encodedURL);
+  // Adjust query parameter to "_limit" for JSONPlaceholder
+  const URL = `${ORIGIN}/${resourceType}?_limit=${limit}`;
+  const encodedURL = encodeURI(URL);
 
-    // --- throw an error if the response is not ok (this works!) ---
+  try {
+    const response = await fetch(encodedURL, { signal: controller.signal });
+
     if (!response.ok) {
-        const message = response.statusText
-            ? `${response.status}: ${response.statusText}\n-> ${URL}`
-            : `HTTP error! status: ${response.status}\n-> ${URL}`;
-        throw new Error(message);
+      const message = response.statusText
+        ? `${response.status}: ${response.statusText}\n-> ${URL}`
+        : `HTTP error! status: ${response.status}\n-> ${URL}`;
+      throw new Error(message);
     }
 
-    /* --- parse the data if the response was ok (this works!) ---*/
     const data = await response.json();
-
-    // --- return the final data ---
     return data;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.error('Request timed out');
+      throw new Error('Request timed out');
+    } else {
+      console.error('Fetch error: ', error);
+      throw error;
+    }
+  } finally {
+    clearTimeout(timeoutId); // Clean up the timeout
+  }
 };

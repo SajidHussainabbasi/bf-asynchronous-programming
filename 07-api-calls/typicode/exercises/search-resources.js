@@ -11,25 +11,22 @@ import { ORIGIN } from '../config.js';
  * @throws {Error} HTTP error! status: {number}.
  */
 export const searchResources = async (resourceType = '', searchQuery = '') => {
-    // --- declare your resource's URL ---
-    // hint: https://github.com/typicode/json-server#full-text-search
-    const URL = _;
+  // Full-text search using the `q` query parameter (json-server supports this)
+  const URL = `${ORIGIN}/${resourceType}?q=${searchQuery}`;
 
-    // --- fetch the API data (this works!) ---
-    const encodedURL = encodeURI(URL);
-    const response = await fetch(encodedURL);
+  // Encode the URL for safety
+  const encodedURL = encodeURI(URL);
+  const response = await fetch(encodedURL);
 
-    // --- throw an error if the response is not ok (this works!) ---
-    if (!response.ok) {
-        const message = response.statusText
-            ? `${response.status}: ${response.statusText}\n-> ${URL}`
-            : `HTTP error! status: ${response.status}\n-> ${URL}`;
-        throw new Error(message);
-    }
+  // Error handling
+  if (!response.ok) {
+    const message = response.statusText
+      ? `${response.status}: ${response.statusText}\n-> ${URL}`
+      : `HTTP error! status: ${response.status}\n-> ${URL}`;
+    throw new Error(message);
+  }
 
-    /* --- parse the data if the response was ok (this works!) ---*/
-    const data = await response.json();
-
-    // --- return the final data ---
-    return data;
+  // Parse and return data
+  const data = await response.json();
+  return data;
 };
