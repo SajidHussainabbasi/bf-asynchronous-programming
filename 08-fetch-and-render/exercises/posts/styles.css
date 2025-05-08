@@ -1,3 +1,21 @@
-.comment {
-    border-top: solid black 1px;
+body {
+    font-family: Arial, sans-serif;
+    margin: 2em;
+    background-color: #f8f9fa;
+}
+
+button {
+    padding: 0.5em 1em;
+    font-size: 1em;
+    margin-bottom: 1em;
+}
+
+.post-list {
+    list-style: none;
+    padding: 0;
+}
+
+.post-item {
+    padding: 0.5em;
+    border-bottom: 1px solid #ccc;
 }
